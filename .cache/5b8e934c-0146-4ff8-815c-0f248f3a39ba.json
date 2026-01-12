@@ -1,0 +1,5 @@
+{
+    "status": "error",
+    "detail": "\u001b[0;31mERROR:\u001b[0m Postprocessing: audio conversion failed: Exiting normally, received signal 2.",
+    "progress": 0
+}
