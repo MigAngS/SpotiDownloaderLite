@@ -77,8 +77,7 @@ def get_base_ydl_opts():
         if os.path.exists(cookie_path):
             print(f"🍪 Cookies encontradas en: {cookie_path}")
             
-            # YouTube-DL intenta escribir en el archivo de cookies, por lo que si está en /etc/secrets (read-only) fallará.
-            # La solución es copiarlo a una ubicación temporal con escritura permitida.
+            # COPY LOGIC STARTS HERE
             try:
                 import shutil
                 import tempfile
@@ -87,13 +86,21 @@ def get_base_ydl_opts():
                 temp_cookie = tempfile.NamedTemporaryFile(delete=False, suffix='.txt')
                 temp_cookie.close()
                 
-                # Copiar contenido
                 shutil.copy2(cookie_path, temp_cookie.name)
-                print(f"🍪 Cookies copiadas a temporal escribible: {temp_cookie.name}")
-                
+                print(f"🍪 Cookies copiadas a: {temp_cookie.name}")
                 opts["cookiefile"] = temp_cookie.name
+                
+                # CRITICAL CHANGE: Remove explicit User-Agent when using cookies
+                # to avoid mismatch with the browser session in the cookies
+                if "user_agent" in opts:
+                    del opts["user_agent"]
+                
+                # Disable advanced optimizations that might look suspicious with authenticated session
+                opts["youtube_include_dash_manifest"] = True
+                opts["youtube_include_hls_manifest"] = True
+                
             except Exception as e:
-                print(f"⚠️ Error copiando cookies a temporal: {e}. Usando archivo original (puede fallar si es read-only).")
+                print(f"⚠️ Error preparing cookies: {e}")
                 opts["cookiefile"] = cookie_path
                 
             break
