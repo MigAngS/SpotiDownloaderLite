@@ -51,7 +51,7 @@ class RetryHandler:
                 error_msg = str(e).lower()
                 
                 # Si es error 403 o bot detection, intentar siguiente estrategia
-                if '403' in error_msg or 'bot' in error_msg or 'forbidden' in error_msg:
+                if any(x in error_msg for x in ['403', 'bot', 'forbidden', 'sign in', 'confirm']):
                     last_error = e
                     print(f"⚠️ Estrategia {strategy['name']} falló con error 403/bot")
                     

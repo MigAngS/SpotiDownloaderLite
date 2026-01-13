@@ -23,6 +23,11 @@ YOUTUBE_STRATEGIES = [
         "player_skip": ["webpage", "configs"]
     },
     {
+        "name": "tvhtml5",
+        "player_client": ["tvhtml5"],
+        "player_skip": ["configs"]
+    },
+    {
         "name": "web_creator",
         "player_client": ["web_creator"],
         "player_skip": ["configs"]
@@ -41,9 +46,15 @@ def get_base_ydl_opts():
         "no_warnings": True,
         "user_agent": USER_AGENT,
         "socket_timeout": 30,
-        "retries": 3,
-        "fragment_retries": 10,
+        "retries": 5,
+        "fragment_retries": 15,
         # Permitir ejecución de JS/WASM para saltar firmas de YouTube
         "n_sig_allow_js": True,
         "n_sig_allow_wasm": True,
+        # Opciones avanzadas para evitar bloqueos
+        "cachedir": False,
+        "youtube_include_dash_manifest": False,
+        "youtube_include_hls_manifest": False,
+        "no_check_certificate": True,
+        "prefer_insecure": True,
     }
