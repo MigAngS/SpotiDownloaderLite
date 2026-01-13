@@ -8,23 +8,28 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 # Estrategias de extractor para YouTube (se intentarán en orden)
 YOUTUBE_STRATEGIES = [
     {
-        "name": "ios_app",
+        "name": "ios_standalone",
         "player_client": ["ios"],
+        "player_skip": ["webpage", "configs"]
+    },
+    {
+        "name": "android_standalone",
+        "player_client": ["android"],
+        "player_skip": ["webpage", "configs"]
+    },
+    {
+        "name": "tv_embedded",
+        "player_client": ["tv"],
+        "player_skip": ["webpage", "configs"]
+    },
+    {
+        "name": "web_creator",
+        "player_client": ["web_creator"],
         "player_skip": ["configs"]
     },
     {
-        "name": "android_app",
-        "player_client": ["android"],
-        "player_skip": ["webpage"]
-    },
-    {
-        "name": "mweb", 
-        "player_client": ["mweb"],
-        "player_skip": []
-    },
-    {
-        "name": "tv_client",
-        "player_client": ["tv"],
+        "name": "mediaconnect",
+        "player_client": ["mediaconnect"],
         "player_skip": []
     }
 ]
@@ -37,5 +42,8 @@ def get_base_ydl_opts():
         "user_agent": USER_AGENT,
         "socket_timeout": 30,
         "retries": 3,
-        "fragment_retries": 3,
+        "fragment_retries": 10,
+        # Permitir ejecución de JS/WASM para saltar firmas de YouTube
+        "n_sig_allow_js": True,
+        "n_sig_allow_wasm": True,
     }
