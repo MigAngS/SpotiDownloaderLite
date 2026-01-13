@@ -35,3 +35,14 @@ export async function downloadPlaylist(playlistUrl, selected_songs, session_id) 
   return response.json(); // { status: "started", session_id: "..." }
 }
 
+export async function cancelDownload(sessionId) {
+  const response = await fetch(`${API_BASE}/cancel/${sessionId}`, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudo cancelar la descarga.");
+  }
+
+  return response.json();
+}

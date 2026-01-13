@@ -19,7 +19,8 @@ class ProgressManager:
             "song_progress": {},
             "status": "in_progress",
             "download_url": None,
-            "created_at": datetime.now().isoformat()
+            "created_at": datetime.now().isoformat(),
+            "cancelled": False
         }
     
     def update_song_progress(self, session_id: str, song_id: str, status: str, percentage: int = 0, message: str = ""):
@@ -47,6 +48,23 @@ class ProgressManager:
     def get_progress(self, session_id: str) -> Dict[str, Any]:
         """Get current progress for a session"""
         return self.sessions.get(session_id, {})
+    
+    def cancel_session(self, session_id: str):
+        """Mark session as cancelled"""
+        if session_id in self.sessions:
+            self.sessions[session_id]["status"] = "cancelled"
+            self.sessions[session_id]["cancelled"] = True
+            self.sessions[session_id]["current_song"] = "Descarga cancelada por el usuario"
+            
+            # Update individual songs
+            for song_id, progress in self.sessions[session_id]["song_progress"].items():
+                if progress["status"] not in ["completed", "error"]:
+                    self.sessions[session_id]["song_progress"][song_id]["status"] = "cancelled"
+                    self.sessions[session_id]["song_progress"][song_id]["message"] = "Cancelado por el usuario"
+    
+    def is_cancelled(self, session_id: str) -> bool:
+        """Check if session is cancelled"""
+        return self.sessions.get(session_id, {}).get("cancelled", False)
     
     def cleanup_session(self, session_id: str):
         """Remove session data (call after download is retrieved)"""

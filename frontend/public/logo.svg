@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="neonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#BD34FE" />
+      <stop offset="100%" stop-color="#FF00FF" />
+    </linearGradient>
+  </defs>
+  <!-- Background Circle for punchy contrast (optional, but keeps it clean) -->
+  <rect width="256" height="256" rx="64" fill="#121212" />
+  
+  <!-- Stylized Music Note + Download Symbol -->
+  <g fill="url(#neonGradient)">
+    <!-- Music Note Body -->
+    <path d="M180 40 L90 60 V180 C90 210 65 230 40 230 C15 230 0 210 0 180 C0 150 15 130 40 130 C50 130 60 133 70 140 V20 L200 0 V140 C200 170 175 190 150 190 C125 190 110 170 110 140 C110 110 125 90 150 90 C160 90 170 93 180 100 V40 Z" transform="translate(30, 20) scale(0.9)" />
+    
+    <!-- Bold Download Arrow -->
+    <path d="M128 100 V220 M80 170 L128 220 L176 170" stroke="white" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none" transform="translate(0, 10)" />
+  </g>
+</svg>

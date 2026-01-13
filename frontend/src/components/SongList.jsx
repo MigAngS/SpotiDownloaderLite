@@ -1,17 +1,18 @@
 import SongItem from "./SongItem";
 import { HiMusicNote } from "react-icons/hi";
 
-export default function SongList({ songs, selectedIndexes, toggleSelection, songProgress = {}, currentTheme }) {
+export default function SongList({ songs, selectedIndexes, toggleSelection, songProgress = {}, currentTheme, isDownloading }) {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <h2
-          className="text-2xl md:text-3xl font-bold flex items-center gap-2"
+          className="text-2xl md:text-3xl font-bold flex items-center gap-2 transition-all duration-300"
           style={{
             background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
+            backgroundClip: 'text',
+            textShadow: 'var(--effect-text-glow)'
           }}
         >
           <HiMusicNote style={{ color: 'var(--color-primary)' }} />
@@ -37,8 +38,9 @@ export default function SongList({ songs, selectedIndexes, toggleSelection, song
             index={index}
             isSelected={selectedIndexes.includes(index)}
             toggleSelection={toggleSelection}
-            progress={songProgress[`song_${index}`]}
+            progress={songProgress[song.id || song.query]}
             currentTheme={currentTheme}
+            isDownloading={isDownloading}
           />
         ))}
       </div>

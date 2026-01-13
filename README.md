@@ -12,6 +12,8 @@
 - 🎨 **Interfaz moderna** con diseño responsivo y animaciones suaves
 - � **Manejo seguro** de credenciales y variables de entorno
 - ⚡ **FFmpeg integrado** - configuración automática sin instalaciones
+- ⏹️ **Cancelación de descargas** - detén el proceso en cualquier momento
+- 🔒 **Bloqueo de selección** - evita cambios accidentales durante descargas
 - 🚀 **Despliegue listo** para Render (backend) y Netlify (frontend)
 
 ## 🛠️ Tecnologías Utilizadas
@@ -20,6 +22,7 @@
 - **Python 3.11+** - Lenguaje de programación principal
 - **FastAPI** - Framework web moderno y rápido para construir APIs
 - **HTTP Polling** - Comunicación en tiempo real para progreso de descargas
+- **Servicio Estático Robusto** - Sistema de entrega de archivos con detección manual de MIME types para máxima compatibilidad en Windows.
 - **yt-dlp (v2025.12.8+)** - Herramienta avanzada para descargar audio de YouTube
 - **Sistema de Reintentos** - Manejador inteligente con 3 estrategias anti-bot
 - **Spotipy** - Cliente para la API de Spotify
@@ -30,8 +33,9 @@
 ### Frontend
 - **React** - Biblioteca de JavaScript para interfaces de usuario
 - **Vite** - Herramienta de construcción y desarrollo
-- **CSS Moderno** - Diseño personalizado con glassmorphism y animaciones
+- **Diseño Multi-Tema** - 5 temas únicos incluyendo "Dark Neon" con efectos de resplandor real y "Crystal Glass" con fondo dinámico.
 - **HTTP Polling** - Para recibir actualizaciones en tiempo real del servidor
+- **CSS Moderno** - Glassmorphism, gradientes vibrantes y animaciones suaves
 
 ## 🚀 Instalación Rápida
 
@@ -107,15 +111,15 @@ SpotiDownloader/
 │   │   ├── progress_manager.py # Gestor de progreso en memoria
 │   │   └── retry_handler.py    # Manejador de reintentos inteligente
 │   ├── models/
-│   │   └── song.py             # Modelos de datos
+│   │   └── song.py             # Modelos de datos (con soporte para IDs únicos)
 │   └── requirements.txt         # Dependencias de Python
 │
 ├── frontend/                    # Aplicación React (Vite)
 │   ├── src/
 │   │   ├── components/          # Componentes modulares
 │   │   │   ├── SongList.jsx     # Lista de canciones con selección
-│   │   │   ├── SongItem.jsx     # Card de canción con progreso individual
-│   │   │   ├── ProgressTracker.jsx # Resumen de progreso de la sesión
+│   │   │   ├── SongItem.jsx     # Card de canción con estados (descargando, cancelado, etc)
+│   │   │   ├── ProgressTracker.jsx # Resumen de progreso con botón de cancelación
 │   │   │   ├── ThemeSwitcher.jsx # Selector de temas (Claro/Oscuro)
 │   │   │   ├── Toast.jsx        # Notificaciones flotantes
 │   │   │   └── Loader.jsx       # Animación de carga
@@ -219,7 +223,23 @@ Este proyecto está bajo la Licencia MIT. Consulta el archivo LICENSE para más 
 
 Proyecto creado por **Miguel Angel Sairitupa Paucar** como parte de su desarrollo personal.
 
-## 🆕 Novedades v2.1
+## 🆕 Novedades v1.3
+
+- ⏹️ **Sistema de Cancelación**: Nuevo botón para abortar descargas en curso de forma segura tanto en cliente como en servidor.
+- 🔒 **UI Locking**: Bloqueo inteligente de la lista de canciones mientras hay una descarga activa para evitar inconsistencias.
+- 🎯 **Sincronización de Precisión**: Seguimiento de progreso basado en IDs únicos de Spotify, eliminando errores de visualización al descargar canciones sueltas.
+- 📋 **Orden de Playlist**: Las descargas ahora siempre respetan el orden original de la lista, sin importar la secuencia de selección del usuario.
+- 🛠️ **Auto-Setup Cloud**: `render.yaml` actualizado para instalar FFmpeg automáticamente en el servidor de producción.
+
+## 🆕 Novedades v1.2
+
+- 💎 **Tema Crystal Glass**: Implementación de fondos de imagen y efectos de desenfoque avanzados.
+- ⚡ **Efectos Neón Reales**: Sistema de resplandor (bloom) dinámico en el tema Dark Neon.
+- 🖼️ **Branding Personalizado**: Nuevo logo SVG profesional y favicon personalizado.
+- 🛠️ **Backend Optimizado**: Mejoras en `main.py` para servir archivos estáticos y SPA de forma más fiable en servidores Windows.
+- 📏 **Fix de Renderizado**: Corrección de recortes de texto en títulos grandes para todos los temas.
+
+## 🆕 Novedades v1.1
 
 - 🛡️ **Sistema Anti-Bot**: Implementación de `RetryHandler` con 3 niveles de evasión.
 - 🚀 **Deploy Ready**: Archivos de configuración para Render y Netlify incluidos.

@@ -28,14 +28,15 @@ def get_playlist_tracks(playlist_url: str) -> list[Song]:
         results = sp.playlist_items(playlist_id)
         songs: list[Song] = []
 
-        for item in results["items"]:
+        for i, item in enumerate(results["items"]):
             track = item.get("track")
-            if not track:  # Evita errores si algún ítem es None
+            if not track:
                 continue
             title = track['name']
             artist = track['artists'][0]['name']
             query = f"{title} - {artist}"
-            songs.append(Song(title=title, artist=artist, query=query))
+            track_id = track.get('id') or f"idx_{i}"
+            songs.append(Song(id=track_id, title=title, artist=artist, query=query))
 
         return songs
     except Exception as e:

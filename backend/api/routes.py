@@ -37,8 +37,8 @@ async def convert_playlist(req: PlaylistRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-async def download_song_async(song: Song, temp_dir: Path, session_id: str, song_index: int):
-    song_id = f"song_{song_index}"
+async def download_song_async(song: Song, temp_dir: Path, session_id: str):
+    song_id = song.id or song.query
     
     try:
         progress_manager.update_song_progress(
@@ -98,11 +98,16 @@ async def process_downloads(songs: list[Song], temp_dir: Path, session_id: str):
     successful_downloads = 0
     
     for index, song in enumerate(songs):
+        # Verificar si la sesión ha sido cancelada
+        if progress_manager.is_cancelled(session_id):
+            print(f"🛑 Sesión {session_id} cancelada. Deteniendo descargas.")
+            return
+
         progress_manager.update_session_progress(
             session_id, completed, f"{song.title} - {song.artist}"
         )
         
-        success = await download_song_async(song, temp_dir, session_id, index)
+        success = await download_song_async(song, temp_dir, session_id)
         
         if success:
             successful_downloads += 1
@@ -156,6 +161,12 @@ async def get_progress(session_id: str):
         raise HTTPException(status_code=404, detail="Session not found")
     
     return progress
+
+
+@router.post("/cancel/{session_id}")
+async def cancel_download(session_id: str):
+    progress_manager.cancel_session(session_id)
+    return {"status": "cancelled", "message": "Descarga cancelada"}
 
 
 @router.get("/download-file/{session_id}")

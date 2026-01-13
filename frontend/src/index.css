@@ -16,9 +16,14 @@
 
   body {
     background-color: var(--color-background) !important;
+    background-image: var(--color-bg-image);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--color-text-primary);
     min-height: 100vh;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, background-image 0.3s ease;
   }
 }
 

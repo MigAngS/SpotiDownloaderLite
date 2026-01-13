@@ -7,36 +7,54 @@ export default function ProgressTracker({
     completedSongs,
     currentSong,
     songProgress = {},
-    currentTheme
+    currentTheme,
+    onCancel
 }) {
     const overallPercentage = totalSongs > 0 ? (completedSongs / totalSongs) * 100 : 0;
 
     return (
         <div
-            className="backdrop-blur-lg rounded-2xl p-6 md:p-8 shadow-2xl mb-6 animate-fade-in"
+            className="backdrop-blur-lg rounded-2xl p-6 md:p-8 mb-6 animate-fade-in transition-all duration-300"
             style={{
                 background: 'var(--color-surface)',
-                border: `1px solid ${currentTheme === 'vibrant-pop' ? '#000' : 'rgba(255,255,255,0.2)'}`
+                border: 'var(--effect-border)',
+                boxShadow: 'var(--effect-card-shadow)'
             }}
         >
-            <div className="flex items-center justify-between mb-6">
-                <h3
-                    className="text-2xl font-bold"
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                <div className="flex items-center gap-4">
+                    <h3
+                        className="text-2xl font-bold transition-all duration-300"
+                        style={{
+                            background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            textShadow: 'var(--effect-text-glow)'
+                        }}
+                    >
+                        Progreso de Descarga
+                    </h3>
+                    <span
+                        className="text-lg font-semibold"
+                        style={{ color: 'var(--color-text-primary)' }}
+                    >
+                        {completedSongs} / {totalSongs}
+                    </span>
+                </div>
+
+                <button
+                    onClick={onCancel}
+                    className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all transform hover:scale-105 active:scale-95 border"
                     style={{
-                        background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text'
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        color: '#EF4444',
                     }}
                 >
-                    Progreso de Descarga
-                </h3>
-                <span
-                    className="text-lg font-semibold"
-                    style={{ color: 'var(--color-text-primary)' }}
-                >
-                    {completedSongs} / {totalSongs}
-                </span>
+                    <FaTimesCircle />
+                    Cancelar Descarga
+                </button>
             </div>
 
             <div className="mb-6">
@@ -70,10 +88,11 @@ export default function ProgressTracker({
 
             {currentSong && (
                 <div
-                    className="rounded-xl p-4 mb-6"
+                    className="rounded-xl p-4 mb-6 transition-all duration-300"
                     style={{
-                        background: `linear-gradient(135deg, var(--color-primary), var(--color-secondary))20`,
-                        border: `1px solid var(--color-primary)`
+                        background: `linear-gradient(135deg, var(--color-primary)22, var(--color-secondary)22)`,
+                        border: 'var(--effect-border)',
+                        boxShadow: 'inset 0 0 10px rgba(255,255,255,0.05)'
                     }}
                 >
                     <div

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { convertPlaylist, downloadPlaylist } from "../api/api";
+import { convertPlaylist, downloadPlaylist, cancelDownload } from "../api/api";
 import SongList from "../components/SongList";
 import ProgressTracker from "../components/ProgressTracker";
 import Toast from "../components/Toast";
@@ -122,7 +122,8 @@ export default function Home() {
         setCompletedSongs(0);
 
         try {
-            const selectedSongs = selectedIndexes.map(i => songs[i]);
+            // Asegurar que las canciones sigan el orden de la lista original, no el de selección
+            const selectedSongs = songs.filter((_, index) => selectedIndexes.includes(index));
             await downloadPlaylist(playlistUrl, selectedSongs, newSessionId);
 
             startPolling(newSessionId);
@@ -144,6 +145,42 @@ export default function Home() {
     const selectAll = () => setSelectedIndexes(songs.map((_, i) => i));
     const deselectAll = () => setSelectedIndexes([]);
 
+    const handleCancelDownload = async () => {
+        if (!sessionId || !isDownloading) return;
+
+        // Detener polling inmediatamente
+        if (pollingIntervalRef.current) {
+            clearInterval(pollingIntervalRef.current);
+            pollingIntervalRef.current = null;
+        }
+
+        try {
+            await cancelDownload(sessionId);
+
+            // Marcar canciones en progreso como canceladas
+            setSongProgress(prev => {
+                const newProgress = { ...prev };
+                Object.keys(newProgress).forEach(key => {
+                    const status = newProgress[key].status;
+                    if (status !== 'completed' && status !== 'error') {
+                        newProgress[key] = {
+                            ...newProgress[key],
+                            status: 'cancelled',
+                            message: 'Cancelado por el usuario'
+                        };
+                    }
+                });
+                return newProgress;
+            });
+
+            setIsDownloading(false);
+            setCurrentSong("");
+            showToast("Descarga cancelada", "warning");
+        } catch (err) {
+            showToast("Error al cancelar la descarga", "error");
+        }
+    };
+
     useEffect(() => {
         return () => {
             if (pollingIntervalRef.current) {
@@ -153,10 +190,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div
-            className="min-h-screen p-4 md:p-8 transition-colors duration-300 ease-in-out"
-            style={{ backgroundColor: 'var(--color-background)' }}
-        >
+        <div className="min-h-screen p-4 md:p-8 transition-all duration-300 ease-in-out">
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             <ThemeSwitcher currentTheme={currentTheme} onThemeChange={setCurrentTheme} />
@@ -165,31 +199,37 @@ export default function Home() {
                 <header className="text-center mb-8 md:mb-12 animate-fade-in">
                     <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mb-4 px-12">
                         <HiMusicNote
-                            className="text-4xl md:text-6xl"
-                            style={{ color: 'var(--color-primary)' }}
+                            className="text-4xl md:text-6xl transition-all duration-300"
+                            style={{
+                                color: 'var(--color-primary)',
+                                filter: 'var(--effect-icon-glow)'
+                            }}
                         />
                         <h1
-                            className="text-3xl md:text-6xl font-bold"
+                            className="text-3xl md:text-6xl font-bold transition-all duration-300 pb-2 px-1"
                             style={{
                                 background: `linear-gradient(135deg, var(--color-primary), var(--color-secondary))`,
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text'
+                                backgroundClip: 'text',
+                                textShadow: 'var(--effect-text-glow)',
+                                lineHeight: '1.2'
                             }}
                         >
                             SpotiDownloader Lite
                         </h1>
                     </div>
-                    <p style={{ color: 'var(--color-text-secondary)' }} className="text-lg md:text-xl px-4">
+                    <p style={{ color: 'var(--color-text-secondary)', textShadow: 'var(--effect-text-glow)' }} className="text-lg md:text-xl px-4">
                         Convierte tus playlists de Spotify en archivos MP3
                     </p>
                 </header>
 
                 <div
-                    className="backdrop-blur-lg rounded-2xl p-6 md:p-8 shadow-2xl mb-6"
+                    className="backdrop-blur-lg rounded-2xl p-6 md:p-8 mb-6 transition-all duration-300"
                     style={{
                         background: 'var(--color-surface)',
-                        border: `1px solid ${currentTheme === 'vibrant-pop' ? '#000' : 'rgba(255,255,255,0.2)'}`
+                        border: 'var(--effect-border)',
+                        boxShadow: 'var(--effect-card-shadow)'
                     }}
                 >
                     <div className="flex flex-col gap-4">
@@ -206,11 +246,10 @@ export default function Home() {
                                 placeholder="https://open.spotify.com/playlist/..."
                                 className="w-full pl-12 pr-4 py-4 rounded-xl transition-all focus:outline-none focus:ring-2"
                                 style={{
-                                    background: currentTheme === 'dark-neon' || currentTheme === 'sunset-gradient'
-                                        ? 'rgba(255,255,255,0.1)'
-                                        : 'rgba(0,0,0,0.05)',
+                                    background: 'rgba(255,255,255,0.05)',
                                     color: 'var(--color-text-primary)',
-                                    border: `2px solid ${currentTheme === 'vibrant-pop' ? '#000' : 'transparent'}`,
+                                    border: 'var(--effect-border)',
+                                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.3)'
                                 }}
                                 disabled={loading || isDownloading}
                             />
@@ -218,11 +257,12 @@ export default function Home() {
 
                         <button
                             onClick={handleConvert}
-                            className="w-full font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+                            className="w-full font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             style={{
                                 background: `linear-gradient(135deg, var(--color-primary), var(--color-secondary))`,
                                 color: '#FFFFFF',
-                                border: currentTheme === 'vibrant-pop' ? '3px solid #000' : 'none'
+                                border: 'var(--effect-border)',
+                                boxShadow: 'var(--effect-button-shadow)'
                             }}
                             disabled={loading || isDownloading}
                         >
@@ -244,24 +284,27 @@ export default function Home() {
                 {songs.length > 0 && (
                     <div className="mb-6 space-y-4">
                         <div
-                            className="backdrop-blur-sm rounded-xl p-4 flex flex-wrap items-center gap-4"
+                            className="backdrop-blur-sm rounded-xl p-4 flex flex-wrap items-center gap-4 transition-all duration-300"
                             style={{
                                 background: 'var(--color-surface)',
-                                border: `1px solid ${currentTheme === 'vibrant-pop' ? '#000' : 'rgba(255,255,255,0.2)'}`
+                                border: 'var(--effect-border)',
+                                boxShadow: 'var(--effect-card-shadow)'
                             }}
                         >
                             <button
                                 onClick={selectAll}
-                                className="font-medium transition-colors hover:opacity-80"
+                                className="font-medium transition-colors hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={{ color: 'var(--color-primary)' }}
+                                disabled={isDownloading}
                             >
                                 Seleccionar Todas
                             </button>
                             <span style={{ color: 'var(--color-text-secondary)' }}>•</span>
                             <button
                                 onClick={deselectAll}
-                                className="font-medium transition-colors hover:opacity-80"
+                                className="font-medium transition-colors hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={{ color: 'var(--color-primary)' }}
+                                disabled={isDownloading}
                             >
                                 Deseleccionar Todas
                             </button>
@@ -275,13 +318,14 @@ export default function Home() {
 
                         <button
                             onClick={handleDownload}
-                            className="w-full font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+                            className="w-full font-semibold py-4 px-6 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             style={{
                                 background: currentTheme === 'vibrant-pop'
                                     ? '#00E676'
                                     : 'linear-gradient(135deg, #10B981, #059669)',
                                 color: '#FFFFFF',
-                                border: currentTheme === 'vibrant-pop' ? '3px solid #000' : 'none'
+                                border: 'var(--effect-border)',
+                                boxShadow: 'var(--effect-button-shadow)'
                             }}
                             disabled={isDownloading || selectedIndexes.length === 0}
                         >
@@ -307,6 +351,7 @@ export default function Home() {
                         currentSong={currentSong}
                         songProgress={songProgress}
                         currentTheme={currentTheme}
+                        onCancel={handleCancelDownload}
                     />
                 )}
 
@@ -399,6 +444,7 @@ export default function Home() {
                         toggleSelection={toggleSelection}
                         songProgress={songProgress}
                         currentTheme={currentTheme}
+                        isDownloading={isDownloading}
                     />
                 )}
             </div>
@@ -406,19 +452,21 @@ export default function Home() {
             {/* Instructions Section */}
             <div className="max-w-4xl mx-auto mt-16 mb-8">
                 <div
-                    className="backdrop-blur-lg rounded-2xl p-6 md:p-8 shadow-xl"
+                    className="backdrop-blur-lg rounded-2xl p-6 md:p-8 transition-all duration-300"
                     style={{
                         background: 'var(--color-surface)',
-                        border: `1px solid ${currentTheme === 'vibrant-pop' ? '#000' : 'rgba(255,255,255,0.2)'}`
+                        border: 'var(--effect-border)',
+                        boxShadow: 'var(--effect-card-shadow)'
                     }}
                 >
                     <h2
-                        className="text-2xl md:text-3xl font-bold mb-6 text-center flex items-center justify-center gap-3"
+                        className="text-2xl md:text-3xl font-bold mb-6 text-center flex items-center justify-center gap-3 transition-all duration-300"
                         style={{
                             background: `linear-gradient(135deg, var(--color-primary), var(--color-secondary))`,
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text'
+                            backgroundClip: 'text',
+                            textShadow: 'var(--effect-text-glow)'
                         }}
                     >
                         <FaBook style={{ color: 'var(--color-primary)' }} />

@@ -15,14 +15,18 @@ export const themes = {
             secondary: '#FF00D4',
             accent: '#7C4DFF',
             background: '#0A0A0F',
-            surface: '#15151F',
+            surface: '#12121A',
             textPrimary: '#FFFFFF',
             textSecondary: '#A4A4A6',
         },
         effects: {
-            glow: 'drop-shadow(0 0 8px currentColor)',
-            cardBg: 'rgba(21, 21, 31, 0.8)',
-            border: 'rgba(0, 229, 255, 0.3)',
+            glow: '0 0 12px rgba(0, 229, 255, 0.3)',
+            textGlow: '0 0 4px rgba(0, 229, 255, 0.5), 0 0 8px rgba(0, 229, 255, 0.2)',
+            border: '2px solid rgba(0, 229, 255, 0.5)',
+            cardShadow: '0 8px 32px rgba(0,0,0,0.8), inset 0 0 10px rgba(0, 229, 255, 0.03)',
+            buttonShadow: '0 0 15px rgba(0, 229, 255, 0.3)',
+            buttonHoverShadow: '0 0 25px rgba(0, 229, 255, 0.6)',
+            iconGlow: 'drop-shadow(0 0 4px #00E5FF)'
         }
     },
     'light-minimal': {
@@ -38,9 +42,13 @@ export const themes = {
             textSecondary: '#6D6D6F',
         },
         effects: {
-            shadow: '0 4px 12px rgba(0,0,0,0.08)',
-            cardBg: 'rgba(255, 255, 255, 0.9)',
-            border: 'rgba(0, 102, 255, 0.2)',
+            glow: 'none',
+            textGlow: 'none',
+            border: '1px solid rgba(0, 102, 255, 0.1)',
+            cardShadow: '0 10px 30px rgba(0,0,0,0.05)',
+            buttonShadow: '0 4px 12px rgba(0, 102, 255, 0.2)',
+            buttonHoverShadow: '0 6px 16px rgba(0, 102, 255, 0.3)',
+            iconGlow: 'none'
         }
     },
     'sunset-gradient': {
@@ -50,15 +58,19 @@ export const themes = {
             primary: '#FF6F61',
             secondary: '#FF9A76',
             accent: '#C76DFF',
-            background: '#2C1A47',
-            surface: '#3C275F',
+            background: '#1A0B2E',
+            surface: '#25163D',
             textPrimary: '#FFFFFF',
             textSecondary: '#E0D0F0',
         },
         effects: {
-            gradient: 'linear-gradient(135deg, #FF9A76, #FF6F61, #C76DFF)',
-            cardBg: 'rgba(60, 39, 95, 0.8)',
-            border: 'rgba(255, 111, 97, 0.3)',
+            glow: 'none',
+            textGlow: 'none',
+            border: '1px solid rgba(255, 111, 97, 0.2)',
+            cardShadow: '0 10px 40px rgba(0,0,0,0.3)',
+            buttonShadow: '0 4px 15px rgba(255, 111, 97, 0.2)',
+            buttonHoverShadow: '0 6px 20px rgba(255, 111, 97, 0.4)',
+            iconGlow: 'none'
         }
     },
     'crystal-glass': {
@@ -68,15 +80,20 @@ export const themes = {
             primary: '#4FC3F7',
             secondary: '#81D4FA',
             accent: '#B3E5FC',
-            background: '#E6F2FF',
-            surface: 'rgba(255,255,255,0.25)',
-            textPrimary: '#0D0D0D',
-            textSecondary: '#4D4D4D',
+            background: '#E1F5FE',
+            surface: 'rgba(255,255,255,0.4)',
+            textPrimary: '#000000ff',
+            textSecondary: '#01579B',
         },
+        backgroundImg: '/crystal-bg.png',
         effects: {
-            glass: 'blur(12px) saturate(150%)',
-            cardBg: 'rgba(255, 255, 255, 0.25)',
-            border: 'rgba(255, 255, 255, 0.3)',
+            glow: 'none',
+            textGlow: 'none',
+            border: '1px solid rgba(255, 255, 255, 0.5)',
+            cardShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            buttonShadow: '0 4px 15px rgba(79, 195, 247, 0.2)',
+            buttonHoverShadow: '0 6px 20px rgba(79, 195, 247, 0.4)',
+            iconGlow: 'none'
         }
     },
     'vibrant-pop': {
@@ -86,15 +103,19 @@ export const themes = {
             primary: '#FF1744',
             secondary: '#00E676',
             accent: '#2979FF',
-            background: '#F3E5F5',
+            background: '#F8F9FA',
             surface: '#FFFFFF',
             textPrimary: '#000000',
             textSecondary: '#3A3A3A',
         },
         effects: {
-            comic: 'drop-shadow(2px 2px 0 #000)',
-            cardBg: 'rgba(255, 255, 255, 0.95)',
-            border: 'rgba(0, 0, 0, 0.8)',
+            glow: 'none',
+            textGlow: 'none',
+            border: '3px solid #000000',
+            cardShadow: '8px 8px 0 #000000',
+            buttonShadow: '4px 4px 0 #000000',
+            buttonHoverShadow: '0 0 0 #000000',
+            iconGlow: 'none'
         }
     }
 };
@@ -109,5 +130,13 @@ export const getThemeStyles = (themeKey) => {
         '--color-surface': theme.colors.surface,
         '--color-text-primary': theme.colors.textPrimary,
         '--color-text-secondary': theme.colors.textSecondary,
+        '--color-bg-image': theme.backgroundImg ? `url('${theme.backgroundImg}')` : 'none',
+        '--effect-glow': theme.effects.glow,
+        '--effect-text-glow': theme.effects.textGlow,
+        '--effect-border': theme.effects.border,
+        '--effect-card-shadow': theme.effects.cardShadow,
+        '--effect-button-shadow': theme.effects.buttonShadow,
+        '--effect-button-hover-shadow': theme.effects.buttonHoverShadow,
+        '--effect-icon-glow': theme.effects.iconGlow,
     };
 };

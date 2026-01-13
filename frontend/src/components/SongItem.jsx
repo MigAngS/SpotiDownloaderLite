@@ -2,7 +2,7 @@ import { HiMusicNote } from "react-icons/hi";
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from "react-icons/fa";
 import { MdDownloading } from "react-icons/md";
 
-export default function SongItem({ song, index, isSelected, toggleSelection, progress, currentTheme }) {
+export default function SongItem({ song, index, isSelected, toggleSelection, progress, currentTheme, isDownloading }) {
   const hasProgress = progress && progress.status;
 
   const getStatusIcon = () => {
@@ -19,6 +19,8 @@ export default function SongItem({ song, index, isSelected, toggleSelection, pro
         return <FaSpinner className="text-yellow-600 animate-spin" />;
       case 'started':
         return <FaSpinner className="text-gray-600 animate-spin" />;
+      case 'cancelled':
+        return <FaTimesCircle className="text-gray-500" />;
       default:
         return null;
     }
@@ -38,6 +40,8 @@ export default function SongItem({ song, index, isSelected, toggleSelection, pro
         return 'Convirtiendo...';
       case 'started':
         return 'Iniciando...';
+      case 'cancelled':
+        return 'Cancelado';
       default:
         return progress.status;
     }
@@ -57,6 +61,8 @@ export default function SongItem({ song, index, isSelected, toggleSelection, pro
         return 'bg-yellow-100 text-yellow-700 border-yellow-300';
       case 'started':
         return 'bg-gray-100 text-gray-700 border-gray-300';
+      case 'cancelled':
+        return 'bg-gray-50 text-gray-500 border-gray-200';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-300';
     }
@@ -64,27 +70,28 @@ export default function SongItem({ song, index, isSelected, toggleSelection, pro
 
   return (
     <div
-      onClick={() => toggleSelection(index)}
+      onClick={() => !isDownloading && toggleSelection(index)}
       className={`
-        backdrop-blur-sm rounded-xl p-4 transition-all cursor-pointer shadow-sm
-        hover:scale-[1.01] hover:shadow-md active:scale-[0.99]
+        backdrop-blur-sm rounded-xl p-4 transition-all shadow-sm
+        ${!isDownloading ? 'hover:scale-[1.01] hover:shadow-md active:scale-[0.99] cursor-pointer' : 'cursor-not-allowed opacity-80'}
         ${isSelected ? 'ring-2' : ''}
       `}
       style={{
         background: isSelected
-          ? `linear-gradient(135deg, ${currentTheme === 'vibrant-pop' ? '#FF1744' : 'var(--color-primary)'}, var(--color-secondary))20`
+          ? `linear-gradient(135deg, ${currentTheme === 'vibrant-pop' ? '#FF1744' : 'var(--color-primary)'}33, var(--color-secondary)33)`
           : 'var(--color-surface)',
-        border: `1px solid ${isSelected ? 'var(--color-primary)' : (currentTheme === 'vibrant-pop' ? '#000' : 'rgba(255,255,255,0.2)')}`,
-        ringColor: 'var(--color-primary)'
+        border: isSelected ? 'var(--effect-border)' : '1px solid rgba(255,255,255,0.1)',
+        boxShadow: isSelected ? 'var(--effect-glow)' : 'none',
       }}
     >
       <div className="flex items-center gap-4">
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={() => toggleSelection(index)}
+          onChange={() => !isDownloading && toggleSelection(index)}
           onClick={(e) => e.stopPropagation()}
-          className="w-5 h-5 rounded cursor-pointer transition-all accent-purple-600"
+          disabled={isDownloading}
+          className={`w-5 h-5 rounded transition-all accent-purple-600 ${isDownloading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
           style={{
             accentColor: 'var(--color-primary)'
           }}
