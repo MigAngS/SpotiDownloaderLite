@@ -44,6 +44,12 @@ class ProgressManager:
             self.sessions[session_id]["status"] = "completed"
             self.sessions[session_id]["download_url"] = download_url
             self.sessions[session_id]["current_song"] = ""
+
+    def fail_session(self, session_id: str):
+        """Mark session as failed"""
+        if session_id in self.sessions:
+            self.sessions[session_id]["status"] = "failed"
+            self.sessions[session_id]["current_song"] = "Todas las descargas fallaron"
     
     def get_progress(self, session_id: str) -> Dict[str, Any]:
         """Get current progress for a session"""

@@ -95,6 +95,15 @@ export default function Home() {
                     clearInterval(pollingIntervalRef.current);
                     pollingIntervalRef.current = null;
                 }
+            } else if (data.status === 'failed') {
+                setIsDownloading(false);
+                setCurrentSong("");
+                showToast("La descarga falló. YouTube bloqueó los intentos.", "error");
+
+                if (pollingIntervalRef.current) {
+                    clearInterval(pollingIntervalRef.current);
+                    pollingIntervalRef.current = null;
+                }
             }
         } catch (error) {
             console.error('Error polling progress:', error);

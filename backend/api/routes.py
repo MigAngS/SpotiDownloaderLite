@@ -116,7 +116,7 @@ async def process_downloads(songs: list[Song], temp_dir: Path, session_id: str):
         progress_manager.update_session_progress(session_id, completed, "")
     
     if successful_downloads == 0:
-        progress_manager.update_session_progress(session_id, completed, "")
+        progress_manager.fail_session(session_id)
         return
     
     try:
