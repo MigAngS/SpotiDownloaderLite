@@ -9,6 +9,11 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 # Estrategias de extractor para YouTube (se intentarán en orden)
 YOUTUBE_STRATEGIES = [
     {
+        "name": "web_default",
+        "player_client": ["web"],
+        "player_skip": []
+    },
+    {
         "name": "ios_standalone",
         "player_client": ["ios"],
         "player_skip": ["webpage", "configs"]
