@@ -6,7 +6,7 @@
 # Proxy para la API de Render
 [[redirects]]
   from = "/api/*"
-  to = "https://tu-app-en-render.onrender.com/api/:splat"
+  to = "https://spotidownloader-backend.onrender.com/api/:splat"
   status = 200
 
 # Redirección para SPA (React Router)
