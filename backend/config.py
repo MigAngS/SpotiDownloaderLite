@@ -59,12 +59,12 @@ def get_base_ydl_opts():
         "n_sig_allow_wasm": True,
         # Opciones avanzadas para evitar bloqueos
         "cachedir": False,
-        "youtube_include_dash_manifest": False,
-        "youtube_include_hls_manifest": False,
+        "youtube_include_dash_manifest": True,
+        "youtube_include_hls_manifest": True,
         "no_check_certificate": True,
         "prefer_insecure": True,
         # Forzar IPv4 ya que las IPv6 de cloud suelen estar banneadas
-        "force_ipv4": True,
+        "force_ipv4": False,
     }
 
     # Verificar si existe archivo de cookies (ya sea local o inyectado por Render secrets)
