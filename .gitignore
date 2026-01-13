@@ -1,7 +1,9 @@
 # Python / Backend
+.cache/
 backend/venv/
 backend/__pycache__/
 backend/*.pyc
+backend/.cache
 backend/.cache/
 backend/bin/
 
