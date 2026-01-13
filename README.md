@@ -189,13 +189,25 @@ El proyecto está configurado para un despliegue sencillo y escalable:
 
 ## 🔍 Cómo Funciona el Sistema Anti-Bot
 
-Debido a las restricciones recientes de YouTube, hemos implementado un sistema de **resiliencia en 3 niveles**:
+Debido a las restricciones recientes de YouTube, hemos implementado un sistema de **resiliencia en múltiples niveles**:
 
-1. **Estrategia Android**: Simula un dispositivo Android para evitar detecciones básicas.
-2. **Estrategia iOS**: Si la anterior falla, simula un cliente iOS.
-3. **Estrategia Web Moderno**: Como último recurso, utiliza un User-Agent de navegador actualizado.
+1. **Firmas Dinámicas (n-sig)**: Ejecución de JS/WASM para resolver retos algorítmicos de YouTube.
+2. **Estrategias de Cliente Standalone**: Uso de perfiles de iOS App, Android App y Android TV.
+3. **Autenticación por Cookies (Recomendado para Cloud)**: Uso de un archivo `cookies.txt` para autenticar peticiones como un usuario real.
 
 Si todas las estrategias son bloqueadas por YouTube, la aplicación marcará la canción específica con un error pero **continuará con el resto de la lista**, asegurando que el proceso no se detenga.
+
+## 🍪 Configuración de Cookies (Evitar Error 403 en la Nube)
+
+En entornos como Render o AWS, las IPs suelen estar marcadas por Google. Para saltar el error "Sign in to confirm you're not a bot", sigue estos pasos:
+
+1. Instala la extensión **[Get cookies.txt LOCALLY](https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflccgomilekfcg)**.
+2. Abre YouTube y loguéate (se recomienda una cuenta alternativa).
+3. Exporta las cookies en formato **Netscape**.
+4. En **Render**, ve a **Environment** -> **Secret Files**.
+5. Crea un archivo llamado `cookies.txt` y pega el contenido ahí.
+
+El backend detectará automáticamente el archivo y lo usará para autenticar todas las descargas.
 
 ## 📊 Seguimiento del Progreso
 
@@ -222,6 +234,13 @@ Este proyecto está bajo la Licencia MIT. Consulta el archivo LICENSE para más 
 ## 🙌 Créditos
 
 Proyecto creado por **Miguel Angel Sairitupa Paucar** como parte de su desarrollo personal.
+
+## 🆕 Novedades v1.4
+
+- 🍪 **Soporte de Cookies**: Implementación de autenticación mediante `cookies.txt` para bypass total en la nube.
+- 🧠 **Firmas Dinámicas**: Soporte para ejecución de JS/WASM (n-sig) en el motor de descarga.
+- 🛡️ **Resiliencia Extendida**: Nuevas estrategias para clientes Standalone (iOS/TV) y modo "invisible" DASH/HLS.
+- 🛑 **Fix de UI Hang**: El sistema ahora detecta fallos totales de sesión y libera la interfaz correctamente.
 
 ## 🆕 Novedades v1.3
 

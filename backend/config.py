@@ -41,7 +41,7 @@ YOUTUBE_STRATEGIES = [
 
 def get_base_ydl_opts():
     """Retorna opciones base de yt-dlp optimizadas para producción"""
-    return {
+    opts = {
         "quiet": True,
         "no_warnings": True,
         "user_agent": USER_AGENT,
@@ -58,3 +58,19 @@ def get_base_ydl_opts():
         "no_check_certificate": True,
         "prefer_insecure": True,
     }
+
+    # Verificar si existe archivo de cookies (ya sea local o inyectado por Render secrets)
+    # Render suele montar secrets en /etc/secrets/ o en la raíz si se configura así
+    cookie_locations = [
+        "cookies.txt",  # Local / Root
+        "/etc/secrets/cookies.txt",  # Render Secret File standard path
+        "backend/cookies.txt"
+    ]
+    
+    for cookie_path in cookie_locations:
+        if os.path.exists(cookie_path):
+            print(f"🍪 Cookies encontradas en: {cookie_path}")
+            opts["cookiefile"] = cookie_path
+            break
+            
+    return opts
