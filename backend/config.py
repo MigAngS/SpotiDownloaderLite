@@ -63,6 +63,8 @@ def get_base_ydl_opts():
         "youtube_include_hls_manifest": False,
         "no_check_certificate": True,
         "prefer_insecure": True,
+        # Forzar IPv4 ya que las IPv6 de cloud suelen estar banneadas
+        "force_ipv4": True,
     }
 
     # Verificar si existe archivo de cookies (ya sea local o inyectado por Render secrets)
